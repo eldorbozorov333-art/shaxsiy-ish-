@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hisobot</title>
+</head>
+<body>
+<h1>📊 Dukon hisobotlari</h1>
+<h2>💰 Jami</h2>
+<p>Jami kirim: {{ total_income }}</p>
+<p>Jami chiqim: {{ total_outcome }}</p>
+<hr>
+<h2>📦 Mahsulotlar</h2>
+<ul>
+    {% for product in products %}
+        <li>
+            {{ product.name }} — {{ product.quantity }} ta
+        </li>
+    {% endfor %}
+</ul>
+<hr>
+<h2>⚠️ Tugagan mahsulotlar</h2>
+<ul>
+    {% for product in finished_products %}
+        <li>{{ product.name }}</li>
+    {% empty %}
+        <li>Hamma mahsulotlar mavjud</li>
+    {% endfor %}
+</ul>
+</body>
+</html>
+
+
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Mahsulotlar Hisoboti</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid #333;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .income {
+            color: green;
+            font-weight: bold;
+        }
+        .outcome {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h2 style="text-align:center;">Mahsulotlar Hisoboti</h2>
+
+<table>
+    <tr>
+        <th>Mahsulot</th>
+        <th>Turi</th>
+        <th>Miqdor</th>
+    </tr>
+
+    {% for product in products %}
+    <tr>
+        <td>{{ product.name }}</td>
+        <td>
+            {% if product.type == 'income' %}
+                <span class="income">Kirim</span>
+            {% else %}
+                <span class="outcome">Chiqim</span>
+            {% endif %}
+        </td>
+        <td>{{ product.quantity }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<hr>
+
+<h2 style="text-align:center;">💰 Jami Summalar</h2>
+<p style="color:green; font-weight:bold;">
+    Jami Kirim: {{ total_income }}
+</p>
+<p style="color:red; font-weight:bold;">
+    Jami Chiqim: {{ total_outcome }}
+</p>
+<p style="font-weight:bold;">
+    Foyda/Zarar: {{ total_income|add:-total_outcome }}
+</p>
+
+</body>
+</html>
