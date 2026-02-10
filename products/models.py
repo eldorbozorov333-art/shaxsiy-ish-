@@ -16,6 +16,7 @@ class Product(models.Model):
 class Income(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="incomes")
     quantity = models.PositiveIntegerField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)  # yangi kirim narxi
     total_price = models.DecimalField(max_digits=12, decimal_places=2, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -24,10 +25,15 @@ class Income(models.Model):
         verbose_name_plural = "Kirimlar"
 
     def save(self, *args, **kwargs):
-        if not self.pk:  # faqat YANGI kirim bo‘lsa
-            self.total_price = self.quantity * self.product.price
+        if not self.pk:
+            # mahsulot narxini yangilaymiz
+            self.product.price = self.price
             self.product.quantity += self.quantity
             self.product.save()
+
+            # umumiy summani avtomatik hisoblaymiz
+            self.total_price = self.quantity * self.price
+
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -45,28 +51,17 @@ class Outcome(models.Model):
         verbose_name_plural = "Chiqimlar"
 
     def save(self, *args, **kwargs):
-        if not self.pk:  # faqat YANGI chiqim bo‘lsa
+        if not self.pk:
             self.total_price = self.quantity * self.product.price
+
             if self.product.quantity >= self.quantity:
                 self.product.quantity -= self.quantity
             else:
                 self.product.quantity = 0
+
             self.product.save()
+
         super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Chiqim: {self.product.name}"
-
-
-# === HISOBOT FUNKSIYALARI ===
-
-def total_income_sum():
-    return Income.objects.aggregate(total=Sum('total_price'))['total'] or 0
-
-
-def total_outcome_sum():
-    return Outcome.objects.aggregate(total=Sum('total_price'))['total'] or 0
-
-
-def finished_products():
-    return Product.objects.filter(quantity=0)
