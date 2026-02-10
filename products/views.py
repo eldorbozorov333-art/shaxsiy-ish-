@@ -1,12 +1,5 @@
 from django.shortcuts import render
-from .models import (
-    Product,
-    Income,
-    Outcome,
-    total_income_sum,
-    total_outcome_sum,
-    finished_products,
-)
+from .models import Product, Income, Outcome
 
 # Create your views here.
 
